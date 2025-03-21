@@ -1,14 +1,16 @@
 <?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Configuration
 $config = [
-    'ca_bundle' => '/ets/pki/tls/certs/ca-bundle.crt',
-    'cert' => '/keys/SG_API.cer',
-    'key' => '/keys/SG.APL.key',
     'url' => 'safeguarding.local'
 ];
 
 /**
- * Make a secure curl request with certificate authentication
+ * Make a curl request with bearer token authentication
  * 
  * @param string $url The URL to request
  * @param array $headers Request headers
@@ -19,15 +21,19 @@ $config = [
 function curl_request($url, $headers, $method = 'GET', $data = null) {
     global $config;
     
+    // Add authorization header with bearer token if available
+    if (isset($_SESSION['access_token']) && !empty($_SESSION['access_token'])) {
+        $headers[] = "Authorization: Bearer " . $_SESSION['access_token'];
+    } else {
+        return ['data' => null, 'status' => 0, 'error' => 'No access token available'];
+    }
+    
     $ch = curl_init();
     $options = [
         CURLOPT_URL => $url,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 3,
         CURLOPT_SSL_VERIFYPEER => true,
-        CURLOPT_CAINFO => $config['ca_bundle'],
-        CURLOPT_SSLCERT => $config['cert'],
-        CURLOPT_SSLKEY => $config['key'],
         CURLOPT_HTTPHEADER => $headers,
         CURLOPT_CUSTOMREQUEST => $method
     ];
