@@ -16,6 +16,9 @@
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
+            <div class="form-group">
+                <input type="checkbox" id="selectAll" /> Select All
+            </div>
             <div id="accountsContainer">
                 <!-- Accounts will be populated via JavaScript -->
             </div>
@@ -66,6 +69,18 @@
                                 const passwordBox = this.closest('.form-row').querySelector('.passwordBox');
                                 passwordBox.required = this.checked;
                                 if (!this.checked) {
+                                    passwordBox.value = '';
+                                }
+                            });
+                        });
+
+                        document.getElementById('selectAll').addEventListener('change', function () {
+                            const isChecked = this.checked;
+                            document.querySelectorAll('.accountCheckbox').forEach(checkbox => {
+                                checkbox.checked = isChecked;
+                                const passwordBox = checkbox.closest('.form-row').querySelector('.passwordBox');
+                                passwordBox.required = isChecked;
+                                if (!isChecked) {
                                     passwordBox.value = '';
                                 }
                             });
