@@ -1,3 +1,11 @@
+<?php
+session_start(); // Start the session
+
+// Generate a new secret key on each page load
+$_SESSION['secret_key'] = bin2hex(random_bytes(32));
+$secretKey = $_SESSION['secret_key'];
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,7 +20,8 @@
     <div class="container">
         <h2>Update Account Password</h2>
         <form id="passwordUpdateForm" action="process_password_update.php" method="POST">
-            <div class="form-group">
+            <input type="hidden" name="secret_key" value="<?php echo htmlspecialchars($secretKey, ENT_QUOTES, 'UTF-8'); ?>">
+            <div class="form-group" style="width: 50%;">
                 <label for="assetSelect">Select Asset</label>
                 <select class="form-control" id="assetSelect" name="assetId" required>
                     <option value="" disabled selected>Select Asset</option>
@@ -44,7 +53,10 @@
             // Initially hide the download button
             downloadCsvButton.style.display = 'none';
 
-            fetch('/includes/get_assets/')
+            // Define secretKey in the global scope
+            const secretKey = "<?php echo htmlspecialchars($secretKey, ENT_QUOTES, 'UTF-8'); ?>";
+
+            fetch('/includes/get_assets/?secret_key=' + secretKey)
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(asset => {
@@ -59,7 +71,7 @@
                 currentAssetId = this.value;
                 currentAssetName = this.options[this.selectedIndex].text; // Get the asset name
 
-                fetch('/includes/get_accounts/?assetId=' + currentAssetId)
+                fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
                         const accountsContainer = document.getElementById('accountsContainer');

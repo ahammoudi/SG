@@ -4,6 +4,13 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Verify the secret key
+if (!isset($_SESSION['secret_key']) || !isset($_REQUEST['secret_key']) || $_REQUEST['secret_key'] !== $_SESSION['secret_key']) {
+    header('HTTP/1.1 403 Forbidden');
+    echo "Access denied.";
+    exit;
+}
+
 // Configuration
 $config = [
     'url' => 'safeguarding.local'
