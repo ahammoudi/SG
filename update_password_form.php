@@ -23,18 +23,23 @@
             </div>
             <button type="submit" class="btn btn-primary" id="submitButton">Update Passwords</button>
             <button type="button" class="btn btn-secondary" id="downloadCsv">Download CSV</button>
+            <input type="file" id="uploadCsv" accept=".csv" style="display: none;">
+            <button type="button" class="btn btn-info" id="uploadCsvButton">Upload CSV</button>
         </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const submitButton = document.getElementById('submitButton');
-            const downloadCsvButton = document.getElementById('downloadCsv'); // Get the button here!
+            const downloadCsvButton = document.getElementById('downloadCsv');
             const assetSelect = document.getElementById('assetSelect');
+            const uploadCsvButton = document.getElementById('uploadCsvButton');
+            const uploadCsv = document.getElementById('uploadCsv');
 
             let currentAssetId = null; // Store the currently selected asset ID
             let currentAssetName = null; // Store the currently selected asset Name
             let currentAccountData = []; // Store the account data
+            let uploadedAccountData = []; // Store the uploaded account data
 
             // Initially hide the download button
             downloadCsvButton.style.display = 'none';
@@ -91,6 +96,76 @@
 
                 document.body.removeChild(link); // Clean up
             });
+
+            uploadCsvButton.addEventListener('click', () => {
+                uploadCsv.click(); // Trigger the file input
+            });
+
+            uploadCsv.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const csv = e.target.result;
+                        const parsedData = parseCSV(csv);
+
+                        // Verify headers
+                        if (!verifyCSVHeaders(parsedData[0])) {
+                            alert('CSV file is missing required headers: Asset Name, Account Name, Account ID, Account Password');
+                            uploadedAccountData = []; // Clear any previously stored data
+                            return;
+                        }
+
+                        // Verify Asset Name
+                        if (!verifyAssetNames(parsedData, currentAssetName)) {
+                            alert('CSV file contains Asset Names that do not match the selected Asset.');
+                            uploadedAccountData = []; // Clear any previously stored data
+                            return;
+                        }
+
+                        uploadedAccountData = parsedData;
+                        alert('CSV file uploaded and parsed. Data stored in uploadedAccountData.');
+                        console.log(uploadedAccountData); // You can now access the data in this variable
+                    };
+                    reader.readAsText(file);
+                }
+            });
+
+            function parseCSV(csv) {
+                const lines = csv.split('\r\n');
+                const headers = lines[0].split(',');
+                const result = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const obj = {};
+                    const currentLine = lines[i].split(',');
+
+                    for (let j = 0; j < headers.length; j++) {
+                        obj[headers[j].trim()] = currentLine[j] ? currentLine[j].trim() : '';
+                    }
+                    result.push(obj);
+                }
+                return result;
+            }
+
+            function verifyCSVHeaders(firstRow) {
+                const requiredHeaders = ['Asset Name', 'Account Name', 'Account ID', 'Account Password'];
+                for (const header of requiredHeaders) {
+                    if (!firstRow.hasOwnProperty(header)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function verifyAssetNames(data, currentAssetName) {
+                for (let i = 1; i < data.length; i++) { // Start from 1 to skip the header row
+                    if (data[i]['Asset Name'] !== currentAssetName) {
+                        return false;
+                    }
+                }
+                return true;
+            }
         });
     </script>
 </body>
