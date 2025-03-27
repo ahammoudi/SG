@@ -36,6 +36,9 @@
             let currentAssetName = null; // Store the currently selected asset Name
             let currentAccountData = []; // Store the account data
 
+            // Initially hide the download button
+            downloadCsvButton.style.display = 'none';
+
             fetch('/includes/get_assets/')
                 .then(response => response.json())
                 .then(data => {
@@ -57,6 +60,9 @@
                         const accountsContainer = document.getElementById('accountsContainer');
                         accountsContainer.innerHTML = `${data.length} accounts loaded`;
                         currentAccountData = data; // Store the account data
+
+                        // Show the download button after accounts are loaded
+                        downloadCsvButton.style.display = 'inline-block';
                     });
             });
 
