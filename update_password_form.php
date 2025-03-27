@@ -17,7 +17,7 @@
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Update Passwords</button>
+            <button type="submit" class="btn btn-primary" id="submitButton">Update Passwords</button>
         </form>
     </div>
 
@@ -25,27 +25,21 @@
         document.addEventListener('DOMContentLoaded', function () {
             const submitButton = document.getElementById('submitButton');
 
-            // Function to check if at least one checkbox is selected
-            function updateSubmitButtonState() {
-                const checkedCheckboxes = document.querySelectorAll('.accountCheckbox:checked');
-                submitButton.disabled = checkedCheckboxes.length === 0;
-            }
-
-            fetch('get_assets.php')
+            fetch('/includes/get_assets/')
                 .then(response => response.json())
                 .then(data => {
                     const assetSelect = document.getElementById('assetSelect');
                     data.forEach(asset => {
                         const option = document.createElement('option');
-                        option.value = asset.id;
-                        option.textContent = asset.name;
+                        option.value = asset.Id;
+                        option.textContent = asset.Name;
                         assetSelect.appendChild(option);
                     });
                 });
 
             document.getElementById('assetSelect').addEventListener('change', function () {
                 const assetId = this.value;
-                fetch('get_accounts.php?assetId=' + assetId)
+                fetch('/includes/get_accounts/?assetId=' + assetId)
                     .then(response => response.json())
                     .then(data => {
                         const accountsContainer = document.getElementById('accountsContainer');
@@ -55,11 +49,11 @@
                         data.forEach(account => {
                             const row = document.createElement('tr');
                             row.innerHTML = `
-                                <td><input type="checkbox" name="selectedAccounts[]" value="${account.id}" class="accountCheckbox">
-                                <input type="hidden" name="accountNames[${account.id}]" value="${account.name}">
+                                <td><input type="checkbox" name="selectedAccounts[]" value="${account.Id}" class="accountCheckbox">
+                                <input type="hidden" name="accountNames[${account.Id}]" value="${account.Name}">
                                 </td>
-                                <td><input type="text" class="form-control" value="${account.name}" disabled></td>
-                                <td><input type="password" name="passwords[${account.id}]" class="form-control passwordBox"></td>
+                                <td><input type="text" class="form-control" value="${account.Name}" disabled></td>
+                                <td><input type="password" name="passwords[${account.Id}]" class="form-control passwordBox"></td>
                             `;
                             tableBody.appendChild(row);
                         });
@@ -71,7 +65,6 @@
                                 if (!this.checked) {
                                     passwordBox.value = '';
                                 }
-                                updateSubmitButtonState();
                             });
                         });
                     });
