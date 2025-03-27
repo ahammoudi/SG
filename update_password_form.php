@@ -17,22 +17,8 @@
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
-
             <div id="accountsContainer">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Account Name</th>
-                            <th>New Password</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Account rows will be added here -->
-                    </tbody>
-                </table>
             </div>
-
             <button type="submit" class="btn btn-primary" id="submitButton">Update Passwords</button>
         </form>
     </div>
