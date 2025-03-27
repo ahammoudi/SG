@@ -21,7 +21,7 @@
             </div>
             <div id="accountsContainer">
             </div>
-            <button type="submit" class="btn btn-primary" id="submitButton">Update Passwords</button>
+            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Update Passwords</button>
             <button type="button" class="btn btn-secondary" id="downloadCsv">Download CSV</button>
             <input type="file" id="uploadCsv" accept=".csv" style="display: none;">
             <button type="button" class="btn btn-info" id="uploadCsvButton">Upload CSV</button>
@@ -163,8 +163,8 @@
                             form.appendChild(accountPasswordInput);
                         });
 
-                        // Submit the form
-                        form.submit();
+                        // Enable the submit button
+                        submitButton.disabled = false;
                     };
                     reader.readAsText(file);
                 }
