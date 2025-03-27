@@ -133,12 +133,13 @@
 
             function parseCSV(csv) {
                 const lines = csv.split('\r\n');
-                const headers = lines[0].split(',');
+                const filteredLines = lines.filter(line => line.trim() !== ''); // Filter out empty lines
+                const headers = filteredLines[0].split(',');
                 const result = [];
 
-                for (let i = 1; i < lines.length; i++) {
+                for (let i = 1; i < filteredLines.length; i++) {
                     const obj = {};
-                    const currentLine = lines[i].split(',');
+                    const currentLine = filteredLines[i].split(',');
 
                     for (let j = 0; j < headers.length; j++) {
                         obj[headers[j].trim()] = currentLine[j] ? currentLine[j].trim() : '';
