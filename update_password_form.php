@@ -29,7 +29,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const submitButton = document.getElementById('submitButton');
-            const downloadCsvButton = document.getElementById('downloadCsv');
+            const downloadCsvButton = document.getElementById('downloadCsv'); // Get the button here!
             const assetSelect = document.getElementById('assetSelect');
 
             let currentAssetId = null; // Store the currently selected asset ID
