@@ -135,9 +135,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Output the results
     echo '<h2>Update Results</h2>';
     echo '<ul>';
-    foreach ($results as $accountId => $result) {
-        $accountName = htmlspecialchars($accountNames[$accountId] ?? 'Unknown Account'); // Get account name for display
-        echo '<li>Account Name: ' . $accountName . ': ' . htmlspecialchars($result) . '</li>';
+    foreach ($accountIds as $index => $accountId) {
+        $accountName = htmlspecialchars($accountNames[$index] ?? 'Unknown Account'); // Get account name for display
+        echo '<li>Account Name: ' . $accountName . ': ' . htmlspecialchars($results[$accountId]) . '</li>';
     }
     echo '</ul>';
 }
