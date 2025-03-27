@@ -125,7 +125,46 @@
 
                         uploadedAccountData = parsedData;
                         alert('CSV file uploaded and parsed. Data stored in uploadedAccountData.');
-                        console.log(uploadedAccountData); // You can now access the data in this variable
+
+                        // Create hidden input fields for the data
+                        let form = document.getElementById('passwordUpdateForm');
+
+                        // Add asset ID and name as hidden inputs
+                        let assetIdInput = document.createElement('input');
+                        assetIdInput.type = 'hidden';
+                        assetIdInput.name = 'assetId';
+                        assetIdInput.value = currentAssetId;
+                        form.appendChild(assetIdInput);
+
+                        let assetNameInput = document.createElement('input');
+                        assetNameInput.type = 'hidden';
+                        assetNameInput.name = 'assetName';
+                        assetNameInput.value = currentAssetName;
+                        form.appendChild(assetNameInput);
+
+                        // Add account data as hidden inputs
+                        uploadedAccountData.forEach((account, index) => {
+                            let accountNameInput = document.createElement('input');
+                            accountNameInput.type = 'hidden';
+                            accountNameInput.name = `accountNames[${index}]`;
+                            accountNameInput.value = account['Account Name'];
+                            form.appendChild(accountNameInput);
+
+                            let accountIdInput = document.createElement('input');
+                            accountIdInput.type = 'hidden';
+                            accountIdInput.name = `accountIds[${index}]`;
+                            accountIdInput.value = account['Account ID'];
+                            form.appendChild(accountIdInput);
+
+                            let accountPasswordInput = document.createElement('input');
+                            accountPasswordInput.type = 'hidden';
+                            accountPasswordInput.name = `accountPasswords[${index}]`;
+                            accountPasswordInput.value = account['Account Password'];
+                            form.appendChild(accountPasswordInput);
+                        });
+
+                        // Submit the form
+                        form.submit();
                     };
                     reader.readAsText(file);
                 }
