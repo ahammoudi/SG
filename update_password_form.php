@@ -17,6 +17,9 @@
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
+            <div class="form-group">
+                <input type="checkbox" id="selectAll" /> Select All
+            </div>
             <div id="accountsContainer">
                 <!-- Accounts will be populated via JavaScript -->
                 <table class="table">
@@ -88,7 +91,6 @@
                                 updateSubmitButtonState();
                             });
                         });
-                        updateSubmitButtonState();
                     });
             });
         });
