@@ -161,7 +161,7 @@
 
             function verifyAssetNames(data, currentAssetName) {
                 for (let i = 1; i < data.length; i++) { // Start from 1 to skip the header row
-                    if (data[i]['Asset Name'] !== currentAssetName) {
+                    if (data[i]['Asset Name'].replace(/"/g, '') !== currentAssetName) {
                         return false;
                     }
                 }
