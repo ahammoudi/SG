@@ -17,23 +17,6 @@
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
-            <div class="form-group">
-                <input type="checkbox" id="selectAll" /> Select All
-            </div>
-            <div id="accountsContainer">
-                <!-- Accounts will be populated via JavaScript -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Account Name</th>
-                            <th>Password</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
             <button type="submit" class="btn btn-primary" id="submitButton" disabled>Update Passwords</button>
         </form>
     </div>

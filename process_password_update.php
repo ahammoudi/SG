@@ -38,7 +38,7 @@ function curl_request($url, $headers, $method = 'GET', $data = null) {
         CURLOPT_CUSTOMREQUEST => $method
     ];
     
-    if ($method === 'POST' && $data !== null) {
+    if (($method === 'POST' || $method === 'PUT') && $data !== null) {
         $options[CURLOPT_POSTFIELDS] = json_encode($data);
     }
     
@@ -68,6 +68,11 @@ function parse_api_response($response, $errorMsg = 'API request failed') {
         return ['error' => "$errorMsg: HTTP status " . $response['status']];
     }
     
+    // Check if the response data is empty
+    if (empty($response['data'])) {
+        return ['success' => 'Password updated successfully'];
+    }
+    
     $data = json_decode($response['data'], true);
     if (json_last_error() !== JSON_ERROR_NONE) {
         return ['error' => "$errorMsg: Invalid JSON response"];
@@ -91,9 +96,9 @@ function updatePassword($accountId, $newPassword) {
         "Accept: application/json",
         "Content-Type: application/json"
     ];
-    $data = ['Password' => $newPassword];
+    $data = $newPassword;
     
-    $response = curl_request($url, $headers, 'POST', $data);
+    $response = curl_request($url, $headers, 'PUT', $data);
     return parse_api_response($response, "Failed to update password");
 }
 
