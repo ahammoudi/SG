@@ -13,18 +13,38 @@
             <div class="form-group">
                 <label for="assetSelect">Select Asset</label>
                 <select class="form-control" id="assetSelect" name="assetId" required>
+                    <option value="" disabled selected>Select Asset</option>
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
             <div id="accountsContainer">
                 <!-- Accounts will be populated via JavaScript -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Account Name</th>
+                            <th>Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
-            <button type="submit" class="btn btn-primary">Update Passwords</button>
+            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Update Passwords</button>
         </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            const submitButton = document.getElementById('submitButton');
+
+            // Function to check if at least one checkbox is selected
+            function updateSubmitButtonState() {
+                const checkedCheckboxes = document.querySelectorAll('.accountCheckbox:checked');
+                submitButton.disabled = checkedCheckboxes.length === 0;
+            }
+
             fetch('get_assets.php')
                 .then(response => response.json())
                 .then(data => {
@@ -43,33 +63,32 @@
                     .then(response => response.json())
                     .then(data => {
                         const accountsContainer = document.getElementById('accountsContainer');
-                        accountsContainer.innerHTML = '';
+                        const tableBody = accountsContainer.querySelector('tbody');
+                        tableBody.innerHTML = ''; // Clear previous table rows
+
                         data.forEach(account => {
-                            const row = document.createElement('div');
-                            row.classList.add('form-row', 'mb-3');
+                            const row = document.createElement('tr');
                             row.innerHTML = `
-                                <div class="col">
-                                    <input type="checkbox" name="selectedAccounts[]" value="${account.id}" class="accountCheckbox">
-                                </div>
-                                <div class="col">
-                                    <input type="text" class="form-control" value="${account.name}" disabled>
-                                </div>
-                                <div class="col">
-                                    <input type="password" name="passwords[${account.id}]" class="form-control passwordBox" required>
-                                </div>
+                                <td><input type="checkbox" name="selectedAccounts[]" value="${account.id}" class="accountCheckbox">
+                                <input type="hidden" name="accountNames[${account.id}]" value="${account.name}">
+                                </td>
+                                <td><input type="text" class="form-control" value="${account.name}" disabled></td>
+                                <td><input type="password" name="passwords[${account.id}]" class="form-control passwordBox"></td>
                             `;
-                            accountsContainer.appendChild(row);
+                            tableBody.appendChild(row);
                         });
 
                         document.querySelectorAll('.accountCheckbox').forEach(checkbox => {
                             checkbox.addEventListener('change', function () {
-                                const passwordBox = this.closest('.form-row').querySelector('.passwordBox');
+                                const passwordBox = this.closest('tr').querySelector('.passwordBox');
                                 passwordBox.required = this.checked;
                                 if (!this.checked) {
                                     passwordBox.value = '';
                                 }
+                                updateSubmitButtonState();
                             });
                         });
+                        updateSubmitButtonState();
                     });
             });
         });

@@ -124,18 +124,21 @@ function verifyPasswordUpdate($accountId, $newPassword) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectedAccounts = $_POST['selectedAccounts'] ?? [];
     $passwords = $_POST['passwords'] ?? [];
+    $accountNames = $_POST['accountNames'] ?? []; // Retrieve account names
 
     $results = [];
     foreach ($selectedAccounts as $accountId) {
         $newPassword = $passwords[$accountId] ?? '';
+        $accountName = $accountNames[$accountId] ?? 'Unknown Account'; // Get account name
+
         if (!empty($newPassword)) {
             // Update the password on Safeguard
             $updateResponse = updatePassword($accountId, $newPassword);
-            
+
             if (!isset($updateResponse['error'])) {
                 // Verify the password update
                 $verificationSuccess = verifyPasswordUpdate($accountId, $newPassword);
-                
+
                 if ($verificationSuccess) {
                     $results[$accountId] = 'Password update and verification successful.';
                 } else {
@@ -153,7 +156,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<h2>Update Results</h2>';
     echo '<ul>';
     foreach ($results as $accountId => $result) {
-        echo '<li>Account ID ' . htmlspecialchars($accountId) . ': ' . htmlspecialchars($result) . '</li>';
+        $accountName = htmlspecialchars($accountNames[$accountId] ?? 'Unknown Account'); // Get account name for display
+        echo '<li>Account Name: ' . $accountName . ': ' . htmlspecialchars($result) . '</li>';
     }
     echo '</ul>';
 }
