@@ -17,6 +17,22 @@
                     <!-- Options will be populated via JavaScript -->
                 </select>
             </div>
+
+            <div id="accountsContainer">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Account Name</th>
+                            <th>New Password</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Account rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+
             <button type="submit" class="btn btn-primary" id="submitButton">Update Passwords</button>
         </form>
     </div>
@@ -43,30 +59,7 @@
                     .then(response => response.json())
                     .then(data => {
                         const accountsContainer = document.getElementById('accountsContainer');
-                        const tableBody = accountsContainer.querySelector('tbody');
-                        tableBody.innerHTML = ''; // Clear previous table rows
-
-                        data.forEach(account => {
-                            const row = document.createElement('tr');
-                            row.innerHTML = `
-                                <td><input type="checkbox" name="selectedAccounts[]" value="${account.Id}" class="accountCheckbox">
-                                <input type="hidden" name="accountNames[${account.Id}]" value="${account.Name}">
-                                </td>
-                                <td><input type="text" class="form-control" value="${account.Name}" disabled></td>
-                                <td><input type="password" name="passwords[${account.Id}]" class="form-control passwordBox"></td>
-                            `;
-                            tableBody.appendChild(row);
-                        });
-
-                        document.querySelectorAll('.accountCheckbox').forEach(checkbox => {
-                            checkbox.addEventListener('change', function () {
-                                const passwordBox = this.closest('tr').querySelector('.passwordBox');
-                                passwordBox.required = this.checked;
-                                if (!this.checked) {
-                                    passwordBox.value = '';
-                                }
-                            });
-                        });
+                        accountsContainer.innerHTML = `${data.length} accounts loaded`;
                     });
             });
         });
