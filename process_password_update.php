@@ -137,7 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     echo '<ul>';
     foreach ($accountIds as $index => $accountId) {
         $accountName = htmlspecialchars($accountNames[$index] ?? 'Unknown Account'); // Get account name for display
-        echo '<li>Account Name: ' . $accountName . ': ' . htmlspecialchars($results[$accountId]) . '</li>';
+        $resultMessage = htmlspecialchars($results[$accountId]);
+        $color = (strpos($resultMessage, 'successful') !== false) ? 'green' : 'red';
+        echo '<li>Account Name: ' . $accountName . ': <span style="color: ' . $color . ';">' . $resultMessage . '</span></li>';
     }
     echo '</ul>';
 }
