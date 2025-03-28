@@ -41,6 +41,12 @@ $secretKey = $_SESSION['secret_key'];
         </form>
     </div>
 
+    <div id="customAlert" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: white; padding: 20px; border: 1px solid black; z-index: 1000;">
+        <p id="customAlertMessage"></p>
+        <button id="customAlertButton">OK</button>
+    </div>
+    <div id="alertOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const submitButton = document.getElementById('submitButton');
@@ -127,20 +133,20 @@ $secretKey = $_SESSION['secret_key'];
 
                         // Verify headers
                         if (!verifyCSVHeaders(parsedData[0])) {
-                            alert('CSV file is missing required headers: Asset Name, Account Name, Account ID, Account Password');
+                            customAlert('CSV file is missing required headers: Asset Name, Account Name, Account ID, Account Password');
                             uploadedAccountData = []; // Clear any previously stored data
                             return;
                         }
 
                         // Verify Asset Name
                         if (!verifyAssetNames(parsedData, currentAssetName)) {
-                            alert('CSV file contains Asset Names that do not match the selected Asset.');
+                            customAlert('CSV file contains Asset Names that do not match the selected Asset.');
                             uploadedAccountData = []; // Clear any previously stored data
                             return;
                         }
 
                         uploadedAccountData = parsedData;
-                        alert('CSV file uploaded and parsed. Data stored in uploadedAccountData.');
+                        customAlert('CSV file uploaded and parsed. Data stored in uploadedAccountData.');
 
                         // Create hidden input fields for the data
                         let form = document.getElementById('passwordUpdateForm');
@@ -221,6 +227,22 @@ $secretKey = $_SESSION['secret_key'];
                     }
                 }
                 return true;
+            }
+
+            function customAlert(message) {
+                const alertBox = document.getElementById('customAlert');
+                const alertMessage = document.getElementById('customAlertMessage');
+                const alertButton = document.getElementById('customAlertButton');
+                const overlay = document.getElementById('alertOverlay');
+
+                alertMessage.textContent = message;
+                alertBox.style.display = 'block';
+                overlay.style.display = 'block';
+
+                alertButton.onclick = function() {
+                    alertBox.style.display = 'none';
+                    overlay.style.display = 'none';
+                };
             }
         });
     </script>
