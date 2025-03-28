@@ -19,6 +19,10 @@ $secretKey = $_SESSION['secret_key'];
 <body>
     <div class="container">
         <h2>Update Account Password</h2>
+        <p>
+            For assistance with updating passwords, refer to the
+            <a href="[Documentation Link Here]" target="_blank">Documentation</a>.
+        </p>
         <form id="passwordUpdateForm" action="process_password_update.php" method="POST">
             <input type="hidden" name="secret_key" value="<?php echo htmlspecialchars($secretKey, ENT_QUOTES, 'UTF-8'); ?>">
             <div class="form-group" style="width: 50%;">
