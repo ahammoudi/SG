@@ -62,6 +62,7 @@ $secretKey = $_SESSION['secret_key'];
 
             // Initially hide the download button
             downloadCsvButton.style.display = 'none';
+            uploadCsvButton.disabled = true; // Disable upload button initially
 
             // Define secretKey in the global scope
             const secretKey = "<?php echo htmlspecialchars($secretKey, ENT_QUOTES, 'UTF-8'); ?>";
@@ -80,6 +81,9 @@ $secretKey = $_SESSION['secret_key'];
             assetSelect.addEventListener('change', function () {
                 currentAssetId = this.value;
                 currentAssetName = this.options[this.selectedIndex].text; // Get the asset name
+
+                // Enable upload button when asset is selected
+                uploadCsvButton.disabled = false;
 
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
@@ -187,6 +191,9 @@ $secretKey = $_SESSION['secret_key'];
 
                         // Enable the submit button
                         submitButton.disabled = false;
+
+                        // Disable the upload button
+                        uploadCsvButton.disabled = true;
                     };
                     reader.readAsText(file);
                 }
