@@ -85,6 +85,10 @@ $secretKey = $_SESSION['secret_key'];
                 // Enable upload button when asset is selected
                 uploadCsvButton.disabled = false;
 
+                // Clear previously uploaded data and disable submit button
+                uploadedAccountData = [];
+                submitButton.disabled = true;
+
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
