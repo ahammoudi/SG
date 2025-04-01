@@ -88,6 +88,22 @@ $secretKey = $_SESSION['secret_key'];
                 // Clear previously uploaded data
                 uploadedAccountData = [];
 
+                // Disable the submit button
+                submitButton.disabled = true;
+
+                // Clear existing hidden input fields
+                let form = document.getElementById('passwordUpdateForm');
+                while (form.firstChild) {
+                    form.removeChild(form.firstChild);
+                }
+
+                // Add back the secret key
+                let secretKeyInput = document.createElement('input');
+                secretKeyInput.type = 'hidden';
+                secretKeyInput.name = 'secret_key';
+                secretKeyInput.value = secretKey;
+                form.appendChild(secretKeyInput);
+
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
