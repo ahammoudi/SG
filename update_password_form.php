@@ -85,25 +85,6 @@ $secretKey = $_SESSION['secret_key'];
                 // Enable upload button when asset is selected
                 uploadCsvButton.disabled = false;
 
-                // Clear previously uploaded data
-                uploadedAccountData = [];
-
-                // Disable the submit button
-                submitButton.disabled = true;
-
-                // Clear existing hidden input fields
-                let form = document.getElementById('passwordUpdateForm');
-                while (form.firstChild) {
-                    form.removeChild(form.firstChild);
-                }
-
-                // Add back the secret key
-                let secretKeyInput = document.createElement('input');
-                secretKeyInput.type = 'hidden';
-                secretKeyInput.name = 'secret_key';
-                secretKeyInput.value = secretKey;
-                form.appendChild(secretKeyInput);
-
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
@@ -113,10 +94,6 @@ $secretKey = $_SESSION['secret_key'];
 
                         // Show the download button after accounts are loaded
                         downloadCsvButton.style.display = 'inline-block';
-                    })
-                    .catch(error => {
-                        console.error("Error fetching accounts:", error);
-                        // Optionally display an error message to the user
                     });
             });
 
@@ -177,6 +154,18 @@ $secretKey = $_SESSION['secret_key'];
 
                         // Create hidden input fields for the data
                         let form = document.getElementById('passwordUpdateForm');
+
+                        // Clear existing hidden input fields
+                        while (form.firstChild) {
+                            form.removeChild(form.firstChild);
+                        }
+
+                        // Add secret key
+                        let secretKeyInput = document.createElement('input');
+                        secretKeyInput.type = 'hidden';
+                        secretKeyInput.name = 'secret_key';
+                        secretKeyInput.value = secretKey;
+                        form.appendChild(secretKeyInput);
 
                         // Add asset ID and name as hidden inputs
                         let assetIdInput = document.createElement('input');
