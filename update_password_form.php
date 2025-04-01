@@ -113,6 +113,10 @@ $secretKey = $_SESSION['secret_key'];
 
                         // Show the download button after accounts are loaded
                         downloadCsvButton.style.display = 'inline-block';
+                    })
+                    .catch(error => {
+                        console.error("Error fetching accounts:", error);
+                        // Optionally display an error message to the user
                     });
             });
 
