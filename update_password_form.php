@@ -85,18 +85,38 @@ $secretKey = $_SESSION['secret_key'];
 
                 // Enable upload button when asset is selected
                 uploadCsvButton.disabled = false;
+                
+                // Disable and hide download button while accounts are loading
+                downloadCsvButton.style.display = 'none';
+                downloadCsvButton.disabled = true;
+                
+                // Set loading indicator
+                const accountsContainer = document.getElementById('accountsContainer');
+                accountsContainer.innerHTML = 'Loading accounts...';
+                
+                // Clear previous account data
+                currentAccountData = [];
 
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
-                        const accountsContainer = document.getElementById('accountsContainer');
-                        accountsContainer.innerHTML = `${data.length} accounts loaded`;
+                        // Process data only after fetch completes
                         currentAccountData = data; // Store the account data
-
-                        // Show the download button after accounts are loaded
-                        downloadCsvButton.style.display = 'inline-block';
-                        // Enable the download button only when accounts are loaded
-                        downloadCsvButton.disabled = false;
+                        accountsContainer.innerHTML = `${data.length} accounts loaded`;
+                        
+                        // Only now show and enable download button
+                        if (data && data.length > 0) {
+                            setTimeout(() => {
+                                downloadCsvButton.style.display = 'inline-block';
+                                downloadCsvButton.disabled = false;
+                            }, 100); // Small delay to ensure UI updates after data processing
+                        } else {
+                            accountsContainer.innerHTML = 'No accounts found for this asset';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading accounts:', error);
+                        accountsContainer.innerHTML = 'Error loading accounts';
                     });
             });
 
