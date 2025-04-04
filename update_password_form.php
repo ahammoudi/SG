@@ -85,32 +85,18 @@ $secretKey = $_SESSION['secret_key'];
 
                 // Enable upload button when asset is selected
                 uploadCsvButton.disabled = false;
-                
-                // Reset download button state but keep it visible while accounts are loading
-                downloadCsvButton.disabled = true;
-                
-                // Clear accounts container while loading
-                const accountsContainer = document.getElementById('accountsContainer');
-                accountsContainer.innerHTML = 'Loading accounts...';
 
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
+                        const accountsContainer = document.getElementById('accountsContainer');
                         accountsContainer.innerHTML = `${data.length} accounts loaded`;
                         currentAccountData = data; // Store the account data
 
-                        // Only enable the download button after accounts are fully loaded
-                        if (data.length > 0) {
-                            downloadCsvButton.disabled = false;
-                        } else {
-                            accountsContainer.innerHTML = 'No accounts found for this asset';
-                        }
-                    })
-                    .catch(error => {
-                        accountsContainer.innerHTML = 'Error loading accounts';
-                        console.error('Error fetching accounts:', error);
-                        // Keep download button disabled on error
-                        downloadCsvButton.disabled = true;
+                        // Show the download button after accounts are loaded
+                        downloadCsvButton.style.display = 'inline-block';
+                        // Enable the download button only when accounts are loaded
+                        downloadCsvButton.disabled = false;
                     });
             });
 
