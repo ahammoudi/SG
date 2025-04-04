@@ -60,8 +60,9 @@ $secretKey = $_SESSION['secret_key'];
             let currentAccountData = []; // Store the account data
             let uploadedAccountData = []; // Store the uploaded account data
 
-            // Initially hide the download button
+            // Initially hide and disable the download button
             downloadCsvButton.style.display = 'none';
+            downloadCsvButton.disabled = true; // Add this line to disable the button
             uploadCsvButton.disabled = true; // Disable upload button initially
 
             // Define secretKey in the global scope
@@ -84,16 +85,32 @@ $secretKey = $_SESSION['secret_key'];
 
                 // Enable upload button when asset is selected
                 uploadCsvButton.disabled = false;
+                
+                // Reset download button state but keep it visible while accounts are loading
+                downloadCsvButton.disabled = true;
+                
+                // Clear accounts container while loading
+                const accountsContainer = document.getElementById('accountsContainer');
+                accountsContainer.innerHTML = 'Loading accounts...';
 
                 fetch('/includes/get_accounts/?assetId=' + currentAssetId + '&secret_key=' + secretKey)
                     .then(response => response.json())
                     .then(data => {
-                        const accountsContainer = document.getElementById('accountsContainer');
                         accountsContainer.innerHTML = `${data.length} accounts loaded`;
                         currentAccountData = data; // Store the account data
 
-                        // Show the download button after accounts are loaded
-                        downloadCsvButton.style.display = 'inline-block';
+                        // Only enable the download button after accounts are fully loaded
+                        if (data.length > 0) {
+                            downloadCsvButton.disabled = false;
+                        } else {
+                            accountsContainer.innerHTML = 'No accounts found for this asset';
+                        }
+                    })
+                    .catch(error => {
+                        accountsContainer.innerHTML = 'Error loading accounts';
+                        console.error('Error fetching accounts:', error);
+                        // Keep download button disabled on error
+                        downloadCsvButton.disabled = true;
                     });
             });
 
@@ -139,6 +156,7 @@ $secretKey = $_SESSION['secret_key'];
                         if (!verifyCSVHeaders(parsedData[0])) {
                             customAlert('CSV file is missing required headers: Asset Name, Account Name, Account ID, Account Password');
                             uploadedAccountData = []; // Clear any previously stored data
+                            uploadCsv.value = ''; // Reset the file input
                             return;
                         }
 
@@ -146,6 +164,7 @@ $secretKey = $_SESSION['secret_key'];
                         if (!verifyAssetNames(parsedData, currentAssetName)) {
                             customAlert('CSV file contains Asset Names that do not match the selected Asset.');
                             uploadedAccountData = []; // Clear any previously stored data
+                            uploadCsv.value = ''; // Reset the file input
                             return;
                         }
 
@@ -154,18 +173,6 @@ $secretKey = $_SESSION['secret_key'];
 
                         // Create hidden input fields for the data
                         let form = document.getElementById('passwordUpdateForm');
-
-                        // Clear existing hidden input fields
-                        while (form.firstChild) {
-                            form.removeChild(form.firstChild);
-                        }
-
-                        // Add secret key
-                        let secretKeyInput = document.createElement('input');
-                        secretKeyInput.type = 'hidden';
-                        secretKeyInput.name = 'secret_key';
-                        secretKeyInput.value = secretKey;
-                        form.appendChild(secretKeyInput);
 
                         // Add asset ID and name as hidden inputs
                         let assetIdInput = document.createElement('input');
